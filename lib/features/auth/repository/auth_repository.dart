@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/repositories/common_firbase_storage_repository.dart';
@@ -108,7 +107,7 @@ class AuthRepository {
         uid: uid,
         profilePic: photoUrl,
         isOnline: true,
-        phoneNumber: auth.currentUser!.uid,
+        phoneNumber: auth.currentUser!.phoneNumber.toString(),
         groupId: [],
       );
       await firestore.collection("users").doc(uid).set(userModel.toMap());
