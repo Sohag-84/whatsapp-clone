@@ -3,17 +3,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
+import 'package:whatsapp_clone/features/auth/controller/auth_controller.dart';
 
-class UserInformationScreen extends StatefulWidget {
+class UserInformationScreen extends ConsumerStatefulWidget {
   static const routeName = '/user-information';
   const UserInformationScreen({super.key});
 
   @override
-  State<UserInformationScreen> createState() => _UserInformationScreenState();
+  ConsumerState<UserInformationScreen> createState() =>
+      _UserInformationScreenState();
 }
 
-class _UserInformationScreenState extends State<UserInformationScreen> {
+class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
   File? image;
   final TextEditingController nameController = TextEditingController();
 
@@ -28,6 +31,18 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
     setState(() {});
   }
 
+  /// to store user data
+  void storeUserData() async {
+    String name = nameController.text.trim();
+    if (name.trim().isNotEmpty) {
+      ref.read(authControllerProvider).saveDataToFirebase(
+            context: context,
+            name: name,
+            profilePic: image,
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -39,12 +54,16 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
               Stack(
                 children: [
                   image == null
+
+                      ///default profile photo
                       ? CircleAvatar(
                           radius: 64,
                           backgroundImage: NetworkImage(
                             "https://gweb-research-imagen.web.app/compositional/An%20oil%20painting%20of%20a%20British%20Shorthair%20cat%20wearing%20a%20cowboy%20hat%20and%20red%20shirt%20skateboarding%20on%20a%20beach./1_.jpeg",
                           ),
                         )
+
+                      ///selected profile photo
                       : CircleAvatar(
                           radius: 64,
                           backgroundImage: FileImage(image!),
@@ -72,7 +91,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: storeUserData,
                     icon: Icon(Icons.done),
                   ),
                 ],

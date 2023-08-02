@@ -1,12 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/common/repositories/common_firbase_storage_repository.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/auth/screens/otp_screen.dart';
 import 'package:whatsapp_clone/features/auth/screens/user_information_screen.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
+import 'package:whatsapp_clone/screens/mobile_layout_screen.dart';
 
 final authRepositoryProvider = Provider(
   (ref) => AuthRepository(
@@ -60,6 +66,49 @@ class AuthRepository {
           context, UserInformationScreen.routeName, (route) => false);
     } on FirebaseAuthException catch (e) {
       showSnackBar(context: context, content: e.message.toString());
+    }
+  }
+
+  ///note that:
+  ///user will be allow to keep the profile photo default if they want
+  ///and also select image from gallery
+  ///that way File is nullable
+  void saveUserDataToFirebase(
+      {required BuildContext context,
+      required String name,
+      required File? profilePic,
+      required ProviderRef providerRef}) async {
+    try {
+      String uid = auth.currentUser!.uid;
+
+      ///default profile photo
+      String photoUrl =
+          "https://gweb-research-imagen.web.app/compositional/An%20oil%20painting%20of%20a%20British%20Shorthair%20cat%20wearing%20a%20cowboy%20hat%20and%20red%20shirt%20skateboarding%20on%20a%20beach./1_.jpeg";
+      if (profilePic != null) {
+        photoUrl = await providerRef
+            .read(commonFirebaseStorageRepositoryProvider)
+            .storeFileToFirebase(
+              ref: "profilePic/$uid",
+              file: profilePic,
+            );
+      }
+      UserModel userModel = UserModel(
+        name: name,
+        uid: uid,
+        profilePic: photoUrl,
+        isOnline: true,
+        phoneNumber: auth.currentUser!.uid,
+        groupId: [],
+      );
+      await firestore.collection("users").doc(uid).set(userModel.toMap());
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MobileLayoutScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
     }
   }
 }
