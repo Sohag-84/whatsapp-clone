@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/common/utils/utils.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
 
 final selectContactRepositoryProvider = Provider(
   (ref) => SelectContactRepository(
@@ -9,6 +11,7 @@ final selectContactRepositoryProvider = Provider(
   ),
 );
 
+///to show all contact list from user device
 class SelectContactRepository {
   final FirebaseFirestore firestore;
   SelectContactRepository({required this.firestore});
@@ -28,5 +31,24 @@ class SelectContactRepository {
       debugPrint(e.toString());
     }
     return contacts;
+  }
+
+  ///for select contact from the contact list
+  void selectContact(
+      {required BuildContext context, required Contact selectedContact}) async {
+    try {
+      var userCollection = await firestore.collection("users").get();
+      bool isFound = false;
+      for (var document in userCollection.docs) {
+        var userData = UserModel.fromMap(document.data());
+
+        /// space replace with empty string. like " " ==> ""
+        String selectedPhoneNumber =
+            selectedContact.phones[0].number.replaceAll(" ", "");
+        print("==> ==> $selectedPhoneNumber <== <==");
+      }
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
   }
 }
