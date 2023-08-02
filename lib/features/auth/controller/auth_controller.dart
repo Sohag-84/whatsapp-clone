@@ -56,4 +56,8 @@ class AuthController {
       providerRef: providerRef,
     );
   }
+
+  Stream<UserModel> userDataById({required String userId}) {
+    return authRepository.userData(userId: userId);
+  }
 }

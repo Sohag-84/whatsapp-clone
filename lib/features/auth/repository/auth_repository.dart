@@ -121,4 +121,12 @@ class AuthRepository {
       showSnackBar(context: context, content: e.toString());
     }
   }
+
+
+  /// to check user online or offline
+  Stream<UserModel> userData({required String userId}) {
+    return firestore.collection("users").doc(userId).snapshots().map(
+          (event) => UserModel.fromMap(event.data()!),
+        );
+  }
 }
