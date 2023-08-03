@@ -1,20 +1,34 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/colors.dart';
+import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
 
-class BottomChatField extends StatefulWidget {
-  const BottomChatField({
-    super.key,
-  });
+class BottomChatField extends ConsumerStatefulWidget {
+  final String receiverUserid;
+  const BottomChatField({super.key, required this.receiverUserid});
 
   @override
-  State<BottomChatField> createState() => _BottomChatFieldState();
+  ConsumerState<BottomChatField> createState() => _BottomChatFieldState();
 }
 
-class _BottomChatFieldState extends State<BottomChatField> {
+class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   bool isShownSendButton = false;
   final msgController = TextEditingController();
+
+  void sendTextMessage() async {
+    if (isShownSendButton) {
+      ref.read(chatControllerProvider).sendTextMessage(
+            context: context,
+            text: msgController.text.trim(),
+            receiverUserId: widget.receiverUserid,
+          );
+      setState(() {
+        msgController.text = "";
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -28,12 +42,13 @@ class _BottomChatFieldState extends State<BottomChatField> {
       children: [
         Expanded(
           child: TextFormField(
-            onChanged: (val){
-              if(val.isNotEmpty){
+            controller: msgController,
+            onChanged: (val) {
+              if (val.trim().isNotEmpty) {
                 setState(() {
                   isShownSendButton = true;
                 });
-              }else{
+              } else {
                 setState(() {
                   isShownSendButton = false;
                 });
@@ -105,10 +120,13 @@ class _BottomChatFieldState extends State<BottomChatField> {
           ),
           child: CircleAvatar(
             backgroundColor: Color(0xFF128C7E),
-            radius: 25,
-            child: Icon(
-              isShownSendButton ? Icons.send : Icons.mic,
-              color: Colors.white,
+            radius: 20,
+            child: InkWell(
+              onTap: sendTextMessage,
+              child: Icon(
+                isShownSendButton ? Icons.send : Icons.mic,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
