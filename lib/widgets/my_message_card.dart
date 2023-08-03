@@ -5,7 +5,8 @@ class MyMessageCard extends StatelessWidget {
   final String message;
   final String date;
 
-  const MyMessageCard({Key? key, required this.message, required this.date}) : super(key: key);
+  const MyMessageCard({Key? key, required this.message, required this.date})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class MyMessageCard extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width - 45,
+          maxWidth: MediaQuery.of(context).size.width - 35,
         ),
         child: Card(
           elevation: 1,
@@ -32,28 +33,26 @@ class MyMessageCard extends StatelessWidget {
                 child: Text(
                   message,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 13,
                   ),
                 ),
               ),
               Positioned(
-                bottom: 4,
+                bottom: 2,
                 right: 10,
                 child: Row(
                   children: [
                     Text(
                       date,
-                      style:const TextStyle(
-                        fontSize: 13,
+                      style: const TextStyle(
+                        fontSize: 10,
                         color: Colors.white60,
                       ),
                     ),
-                    const SizedBox(
-                      width: 5,
-                    ),
+                    const SizedBox(width: 5),
                     const Icon(
                       Icons.done_all,
-                      size: 20,
+                      size: 12,
                       color: Colors.white60,
                     ),
                   ],

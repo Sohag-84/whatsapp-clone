@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:whatsapp_clone/colors.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
-import 'package:whatsapp_clone/info.dart';
 import 'package:whatsapp_clone/features/chat/screens/mobile_chat_screen.dart';
 import 'package:whatsapp_clone/models/chat_contact.dart';
 
@@ -64,7 +63,8 @@ class ContactsList extends ConsumerWidget {
                             radius: 30,
                           ),
                           trailing: Text(
-                            DateFormat.Hm().format(chatContactData.timeSent),
+                            DateFormat('h:mm a')
+                                .format(chatContactData.timeSent),
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 13,
