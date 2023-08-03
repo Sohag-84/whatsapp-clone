@@ -122,11 +122,18 @@ class AuthRepository {
     }
   }
 
-
   /// to check user online or offline
   Stream<UserModel> userData({required String userId}) {
     return firestore.collection("users").doc(userId).snapshots().map(
           (event) => UserModel.fromMap(event.data()!),
         );
+  }
+
+  /// set user status:
+  /// --> to set user online offline
+  void setUserState({required bool isOnline}) async {
+    await firestore.collection("users").doc(auth.currentUser!.uid).update({
+      "isOnline": isOnline,
+    });
   }
 }
