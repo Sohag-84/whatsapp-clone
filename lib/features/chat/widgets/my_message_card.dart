@@ -28,6 +28,9 @@ class MyMessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///check replied message empty or not
+    final isReplying = repliedText.isNotEmpty;
+
     return SwipeTo(
       onLeftSwipe: onLeftSwipe,
       child: Align(
@@ -38,7 +41,8 @@ class MyMessageCard extends StatelessWidget {
           ),
           child: Card(
             elevation: 1,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: messageColor,
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Stack(
@@ -52,9 +56,37 @@ class MyMessageCard extends StatelessWidget {
                           bottom: 20,
                         )
                       : EdgeInsets.only(bottom: 15),
-                  child: DisplayTextImageGIF(
-                    message: message,
-                    type: type,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ///user cascade operator so that
+                      ///we can use multiple widget
+                      if (isReplying) ...[
+                        Text(
+                          username,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 3),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: backgroundColor.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: DisplayTextImageGIF(
+                            message: repliedText,
+                            type: repliedMessageType,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                      ],
+                      DisplayTextImageGIF(
+                        message: message,
+                        type: type,
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(

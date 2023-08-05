@@ -73,6 +73,7 @@ class ChatController {
               messageEnum: messageEnum,
               messageReply: messageReply,
             ));
+    ref.read(messageReplyProvider.notifier).update((state) => null);
   }
 
   void sendGIFMessage({
@@ -98,5 +99,6 @@ class ChatController {
             messageReply: messageReply,
           ),
         );
+    ref.read(messageReplyProvider.notifier).update((state) => null);
   }
 }
