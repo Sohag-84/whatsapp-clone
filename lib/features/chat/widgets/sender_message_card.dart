@@ -37,12 +37,7 @@ class SenderMessageCard extends StatelessWidget {
                         top: 5,
                         bottom: 20,
                       )
-                    : EdgeInsets.only(
-                        left: 5,
-                        right: 5,
-                        top: 5,
-                        bottom: 25,
-                      ),
+                    : EdgeInsets.only(bottom: 15),
                 child: DisplayTextImageGIF(
                   message: message,
                   type: type,

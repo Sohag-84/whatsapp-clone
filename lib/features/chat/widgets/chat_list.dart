@@ -36,7 +36,7 @@ class _ChatListState extends ConsumerState<ChatList> {
             .read(chatControllerProvider)
             .chatStream(receiverUserId: widget.receiverUserid),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return Loader();
           }
 
