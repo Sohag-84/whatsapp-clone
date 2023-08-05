@@ -11,8 +11,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/colors.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
+import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
+import 'package:whatsapp_clone/features/chat/widgets/message_reply_preview.dart';
 
 class BottomChatField extends ConsumerStatefulWidget {
   final String receiverUserid;
@@ -66,6 +68,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
       }
       if (isRecording) {
         await _soundRecorder!.stopRecorder();
+
         ///after stop the recording we should to send it
         sendFileMessage(file: File(path), messageEnum: MessageEnum.audio);
       } else {
@@ -158,8 +161,15 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
 
   @override
   Widget build(BuildContext context) {
+    final messageReply = ref.watch(messageReplyProvider);
+
+    ///if the messageReply is null its show isShowMessageReply = false
+    ///if isShowMessageReply is null we won't show that container
+    ///otherwise we show a container
+    final isShowMessageReply = messageReply != null;
     return Column(
       children: [
+        isShowMessageReply ? MessageReplyPreview() : SizedBox(),
         Row(
           children: [
             Expanded(
