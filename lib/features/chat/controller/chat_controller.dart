@@ -67,4 +67,19 @@ class ChatController {
               messageEnum: messageEnum,
             ));
   }
+
+  void sendGIFMessage({
+    required BuildContext context,
+    required String gifUrl,
+    required String receiverUserId,
+  }) {
+    ref.read(userDataAuthProvider).whenData(
+          (value) => chatRepository.sendGIFMessage(
+            context: context,
+            gifUrl: gifUrl,
+            receiverUserId: receiverUserId,
+            senderUser: value!,
+          ),
+        );
+  }
 }

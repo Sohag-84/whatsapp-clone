@@ -295,4 +295,58 @@ class ChatRepository {
       showSnackBar(context: context, content: e.toString());
     }
   }
+
+  ///send GIF in firebase
+  void sendGIFMessage({
+    required BuildContext context,
+    required String gifUrl,
+    required String receiverUserId,
+    required UserModel senderUser,
+  }) async {
+    try {
+      var timeSent = DateTime.now();
+      UserModel receiverUserData;
+
+      var userDataMap =
+          await firestore.collection('users').doc(receiverUserId).get();
+      receiverUserData = UserModel.fromMap(userDataMap.data()!);
+
+      ///create message id:
+      var messageId = const Uuid().v1();
+
+      ///save data in two collection
+      ///1.-->contact chat sub-collection
+      ///hints for number one collection:
+      ///users --> receiver user id ==>chats(collection name)--> current user id --> set data
+      ///2. --> message sub-collection
+      ///hints for number two collection:
+      ///users-->sender id-->receiver id-->messages(collection name)--> message id-->store user sending message
+      ///--> --> --> --> --> --> ==> ==> --> --> --> --> --> -->
+
+      ///we should to save data in contact sub-collection
+      ///1.-->contact chat sub-collection
+      _saveDataToContactsSubCollection(
+        senderUserData: senderUser,
+        receiverUserData: receiverUserData,
+        text: 'GIF',
+        timeSent: timeSent,
+        receiverUserId: receiverUserId,
+      );
+
+      ///now we should to save data in message sub-collection
+      ///1.-->message sub-collection
+
+      _saveMessageToMessageSubCollection(
+        receiverUserId: receiverUserId,
+        text: gifUrl,
+        timeSent: timeSent,
+        messageId: messageId,
+        username: senderUser.name,
+        receiverUsername: receiverUserData.name,
+        messageType: MessageEnum.gif,
+      );
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
 }

@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'dart:io';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:enough_giphy_flutter/enough_giphy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/colors.dart';
@@ -59,6 +60,20 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     File? video = await pickVideoFromGallery(context: context);
     if (video != null) {
       sendFileMessage(file: video, messageEnum: MessageEnum.video);
+    }
+  }
+
+  ///to pick GIF
+  void selectGIF() async {
+    GiphyGif? gif = await pickGIF(
+      context: context,
+    );
+    if (gif != null) {
+      ref.read(chatControllerProvider).sendGIFMessage(
+            context: context,
+            gifUrl: gif.url,
+            receiverUserId: widget.receiverUserid,
+          );
     }
   }
 
@@ -133,7 +148,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: selectGIF,
                           icon: Icon(
                             Icons.gif,
                             color: Colors.grey,
