@@ -73,10 +73,18 @@ class ChatController {
     required String gifUrl,
     required String receiverUserId,
   }) {
+    /// we have to convert url:
+    ///Main url==> https://giphy.com/gifs/happy-dinosally-dino-ehxq3SFXUxvtK2qDFs to==>
+    ///converted Url ==> https://i.giphy.com/media/ehxq3SFXUxvtK2qDFs/200.gif
+    ///if you don't convert the gif message url you can't show the gif message
+    int gifUrlPartIndex = gifUrl.lastIndexOf("-") + 1;
+    String gifUrlPart = gifUrl.substring(gifUrlPartIndex);
+    String newGifUrl = "https://i.giphy.com/media/$gifUrlPart/200.gif";
+
     ref.read(userDataAuthProvider).whenData(
           (value) => chatRepository.sendGIFMessage(
             context: context,
-            gifUrl: gifUrl,
+            gifUrl: newGifUrl,
             receiverUserId: receiverUserId,
             senderUser: value!,
           ),
