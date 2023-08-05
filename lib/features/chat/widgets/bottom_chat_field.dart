@@ -6,6 +6,9 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:enough_giphy_flutter/enough_giphy_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/colors.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
@@ -24,6 +27,26 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   final msgController = TextEditingController();
   bool isShowEmojiContainer = false;
   FocusNode focusNode = FocusNode();
+  FlutterSoundRecorder? _soundRecorder;
+  bool isRecorderInit = false;
+  bool isRecording = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _soundRecorder = FlutterSoundRecorder();
+    openAudio();
+  }
+
+  ///for audio message
+  void openAudio() async {
+    final status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Mic permission not allowed!');
+    }
+    await _soundRecorder!.openRecorder();
+    isRecorderInit = true;
+  }
 
   void sendTextMessage() async {
     if (isShownSendButton) {
@@ -33,7 +56,26 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
             receiverUserId: widget.receiverUserid,
           );
       setState(() {
-        msgController.text = "";
+        msgController.text = '';
+      });
+    } else {
+      var tempDir = await getTemporaryDirectory();
+      var path = '${tempDir.path}/flutter_sound.aac';
+      if (!isRecorderInit) {
+        return;
+      }
+      if (isRecording) {
+        await _soundRecorder!.stopRecorder();
+        ///after stop the recording we should to send it
+        sendFileMessage(file: File(path), messageEnum: MessageEnum.audio);
+      } else {
+        await _soundRecorder!.startRecorder(
+          toFile: path,
+        );
+      }
+
+      setState(() {
+        isRecording = !isRecording;
       });
     }
   }
@@ -110,6 +152,8 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   void dispose() {
     super.dispose();
     msgController.dispose();
+    _soundRecorder!.closeRecorder();
+    isRecorderInit = false;
   }
 
   @override
@@ -203,7 +247,11 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                 child: InkWell(
                   onTap: sendTextMessage,
                   child: Icon(
-                    isShownSendButton ? Icons.send : Icons.mic,
+                    isShownSendButton
+                        ? Icons.send
+                        : isRecording
+                            ? Icons.close
+                            : Icons.mic,
                     color: Colors.white,
                   ),
                 ),
