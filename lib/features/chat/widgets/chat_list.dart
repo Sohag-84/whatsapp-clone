@@ -45,57 +45,69 @@ class _ChatListState extends ConsumerState<ChatList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Message>>(
-        stream: ref
-            .read(chatControllerProvider)
-            .chatStream(receiverUserId: widget.receiverUserid),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Loader();
-          }
+      stream: ref
+          .read(chatControllerProvider)
+          .chatStream(receiverUserId: widget.receiverUserid),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Loader();
+        }
 
-          ///for auto scrolling
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            messageController
-                .jumpTo(messageController.position.maxScrollExtent);
-          });
+        ///for auto scrolling
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          messageController.jumpTo(messageController.position.maxScrollExtent);
+        });
 
-          return ListView.builder(
-            controller: messageController,
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final messageData = snapshot.data![index];
-              var timeSent = DateFormat('h:mm a').format(messageData.timeSent);
-              if (messageData.senderId ==
-                  FirebaseAuth.instance.currentUser!.uid) {
-                return MyMessageCard(
-                  message: messageData.text.toString(),
-                  date: timeSent.toString(),
-                  type: messageData.type,
-                  repliedText: messageData.repliedMessage,
-                  username: messageData.repliedTo,
-                  repliedMessageType: messageData.repliedMessageType,
-                  onLeftSwipe: () => onMessageSwipe(
-                    message: messageData.text,
-                    isMe: true,
-                    messageEnum: messageData.type,
-                  ),
-                );
-              }
-              return SenderMessageCard(
+        return ListView.builder(
+          controller: messageController,
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            final messageData = snapshot.data![index];
+            var timeSent = DateFormat('h:mm a').format(messageData.timeSent);
+
+            if (!messageData.isSeen &&
+                messageData.receiverId ==
+                    FirebaseAuth.instance.currentUser!.uid) {
+              ref.read(chatControllerProvider).setChatMessageSeen(
+                    context: context,
+                    receiverUserId: widget.receiverUserid,
+                    messageId: messageData.messageId,
+                  );
+            }
+
+            if (messageData.senderId ==
+                FirebaseAuth.instance.currentUser!.uid) {
+              return MyMessageCard(
                 message: messageData.text.toString(),
                 date: timeSent.toString(),
                 type: messageData.type,
                 repliedText: messageData.repliedMessage,
                 username: messageData.repliedTo,
                 repliedMessageType: messageData.repliedMessageType,
-                onRightSwipe: () => onMessageSwipe(
+                onLeftSwipe: () => onMessageSwipe(
                   message: messageData.text,
-                  isMe: false,
+                  isMe: true,
                   messageEnum: messageData.type,
                 ),
+                isSeen: messageData.isSeen,
               );
-            },
-          );
-        });
+            }
+            return SenderMessageCard(
+              message: messageData.text.toString(),
+              date: timeSent.toString(),
+              type: messageData.type,
+              repliedText: messageData.repliedMessage,
+              username: messageData.repliedTo,
+              repliedMessageType: messageData.repliedMessageType,
+              onRightSwipe: () => onMessageSwipe(
+                message: messageData.text,
+                isMe: false,
+                messageEnum: messageData.type,
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

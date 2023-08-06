@@ -155,8 +155,8 @@ class ChatRepository {
           : messageReply.isMe
               ? senderUsername
               : receiverUsername,
-        repliedMessageType: messageReply == null?MessageEnum.text:messageReply.messageEnum,
-
+      repliedMessageType:
+          messageReply == null ? MessageEnum.text : messageReply.messageEnum,
     );
 
     /// -->to show message from sender side
@@ -232,7 +232,7 @@ class ChatRepository {
         username: senderUser.name,
         receiverUsername: receiverUserData.name,
         messageType: MessageEnum.text,
-        messageReply:messageReply,
+        messageReply: messageReply,
         senderUsername: senderUser.name,
       );
     } catch (e) {
@@ -305,7 +305,7 @@ class ChatRepository {
         username: senderUserData.name,
         receiverUsername: receiverUserData.name,
         messageType: messageEnum,
-        messageReply:messageReply,
+        messageReply: messageReply,
         senderUsername: senderUserData.name,
       );
     } catch (e) {
@@ -365,6 +365,37 @@ class ChatRepository {
         messageReply: messageReply,
         senderUsername: senderUser.name,
       );
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
+
+  ///to set message seen option
+  void setChatMessageSeen({
+    required BuildContext context,
+    required String receiverUserId,
+    required String messageId,
+  }) async {
+    try {
+      await firestore
+          .collection('users')
+          .doc(auth.currentUser!.uid)
+          .collection('chats')
+          .doc(receiverUserId)
+          .collection('messages')
+          .doc(messageId)
+          .update({'isSeen': true});
+
+      /// -->to show message in receiver side
+      ///users-->receiver id-->chats(collection)-->sender id-->messages(collection name)--> message id-->store user sending message
+      await firestore
+          .collection('users')
+          .doc(receiverUserId)
+          .collection('chats')
+          .doc(auth.currentUser!.uid)
+          .collection('messages')
+          .doc(messageId)
+          .update({'isSeen': true});
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
