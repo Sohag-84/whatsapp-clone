@@ -5,17 +5,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/colors.dart';
+import 'package:whatsapp_clone/features/status/controller/chat_controller.dart';
 
 class ConfirmStatusScreen extends ConsumerWidget {
   static const String routeName = "/confirm-status-screen";
 
   final File file;
   const ConfirmStatusScreen({super.key, required this.file});
+
+  void addStatus({required BuildContext context, required WidgetRef ref}) {
+    ref.read(statusControllerProvider).addStatus(context: context, file: file);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => addStatus(context: context, ref: ref),
         child: Icon(
           Icons.done,
           color: Colors.white,
