@@ -1,11 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/colors.dart';
+import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/auth/controller/auth_controller.dart';
 import 'package:whatsapp_clone/features/select%20contacts/screens/select_contact_screen.dart';
 import 'package:whatsapp_clone/features/chat/widgets/contacts_list.dart';
+import 'package:whatsapp_clone/features/status/screens/confirm_status_screen.dart';
 import 'package:whatsapp_clone/features/status/screens/status_contacts_screen.dart';
 
 class MobileLayoutScreen extends ConsumerStatefulWidget {
@@ -101,8 +105,19 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, SelectContactsScreen.routeName);
+          onPressed: () async {
+            if (tabController.index == 0) {
+              Navigator.pushNamed(context, SelectContactsScreen.routeName);
+            } else {
+              File? pickedImage = await pickImageFromGallery(context: context);
+              if (pickedImage != null) {
+                Navigator.pushNamed(
+                  context,
+                  ConfirmStatusScreen.routeName,
+                  arguments: pickedImage,
+                );
+              }
+            }
           },
           backgroundColor: tabColor,
           child: const Icon(
