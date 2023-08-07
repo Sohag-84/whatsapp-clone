@@ -7,6 +7,7 @@ import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/features/auth/controller/auth_controller.dart';
 import 'package:whatsapp_clone/features/chat/repositories/chat_repository.dart';
 import 'package:whatsapp_clone/models/chat_contact.dart';
+import 'package:whatsapp_clone/models/group.dart';
 import 'package:whatsapp_clone/models/message.dart';
 
 final chatControllerProvider = Provider(
@@ -25,6 +26,11 @@ class ChatController {
   ///to get chat contact list
   Stream<List<ChatContact>> chatContacts() {
     return chatRepository.getChatContacts();
+  }
+
+  ///to get chat groups list
+  Stream<List<GroupModel>> chatGroups() {
+    return chatRepository.getChatGroups();
   }
 
   ///to get chat message list
