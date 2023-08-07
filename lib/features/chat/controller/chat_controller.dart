@@ -38,11 +38,17 @@ class ChatController {
     return chatRepository.getChatStream(receiverUserId: receiverUserId);
   }
 
+  ///to get group chat message list
+  Stream<List<Message>> groupChatStream({required String groupId}) {
+    return chatRepository.getGroupChatStream(groupId: groupId);
+  }
+
   ///For send send message
   void sendTextMessage({
     required BuildContext context,
     required String text,
     required String receiverUserId,
+    required bool isGroupChat,
   }) {
     /// note that:
     /// ref.read ==> read onetime
@@ -56,6 +62,7 @@ class ChatController {
             receiverUserId: receiverUserId,
             senderUser: value!,
             messageReply: messageReply,
+            isGroupChat: isGroupChat,
           ),
         );
   }
@@ -66,6 +73,7 @@ class ChatController {
     required File file,
     required String receiverUserId,
     required MessageEnum messageEnum,
+    required bool isGroupChat,
   }) {
     final messageReply = ref.read(messageReplyProvider);
     ref
@@ -78,6 +86,7 @@ class ChatController {
               ref: ref,
               messageEnum: messageEnum,
               messageReply: messageReply,
+              isGroupChat: isGroupChat,
             ));
     ref.read(messageReplyProvider.notifier).update((state) => null);
   }
@@ -86,6 +95,7 @@ class ChatController {
     required BuildContext context,
     required String gifUrl,
     required String receiverUserId,
+    required bool isGroupChat,
   }) {
     final messageReply = ref.read(messageReplyProvider);
 
@@ -103,6 +113,7 @@ class ChatController {
             receiverUserId: receiverUserId,
             senderUser: value!,
             messageReply: messageReply,
+            isGroupChat: isGroupChat,
           ),
         );
     ref.read(messageReplyProvider.notifier).update((state) => null);

@@ -20,69 +20,74 @@ class ContactsList extends ConsumerWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            ///Group List
             StreamBuilder<List<GroupModel>>(
-                stream: ref.watch(chatControllerProvider).chatGroups(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Loader();
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var chatGroupData = snapshot.data![index];
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                MobileChatScreen.routeName,
-                                arguments: {
-                                  'name': chatGroupData.name,
-                                  'uid': chatGroupData.groupId,
-                                },
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: ListTile(
-                                title: Text(
-                                  chatGroupData.name,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                  ),
+              stream: ref.watch(chatControllerProvider).chatGroups(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Loader();
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    var chatGroupData = snapshot.data![index];
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              MobileChatScreen.routeName,
+                              arguments: {
+                                'name': chatGroupData.name,
+                                'uid': chatGroupData.groupId,
+                                'isGroupChat': true,
+                              },
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: ListTile(
+                              title: Text(
+                                chatGroupData.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
                                 ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 6.0),
-                                  child: Text(
-                                    chatGroupData.lastMessage.toString(),
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
+                              ),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 6.0),
+                                child: Text(
+                                  chatGroupData.lastMessage.toString(),
+                                  style: const TextStyle(fontSize: 15),
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    chatGroupData.groupPic.toString(),
-                                  ),
-                                  radius: 30,
+                              ),
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  chatGroupData.groupPic.toString(),
                                 ),
-                                trailing: Text(
-                                  DateFormat('h:mm a')
-                                      .format(chatGroupData.timeSent),
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 13,
-                                  ),
+                                radius: 30,
+                              ),
+                              trailing: Text(
+                                DateFormat('h:mm a')
+                                    .format(chatGroupData.timeSent),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13,
                                 ),
                               ),
                             ),
                           ),
-                          const Divider(color: dividerColor, indent: 85),
-                        ],
-                      );
-                    },
-                  );
-                }),
+                        ),
+                        const Divider(color: dividerColor, indent: 85),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            ///Chat Contact List
             StreamBuilder<List<ChatContact>>(
                 stream: ref.watch(chatControllerProvider).chatContacts(),
                 builder: (context, snapshot) {
@@ -104,6 +109,7 @@ class ContactsList extends ConsumerWidget {
                                 arguments: {
                                   'name': chatContactData.name,
                                   'uid': chatContactData.contactId,
+                                  'isGroupChat': false,
                                 },
                               );
                             },
