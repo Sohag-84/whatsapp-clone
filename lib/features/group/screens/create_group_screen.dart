@@ -3,19 +3,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/colors.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
+import 'package:whatsapp_clone/features/group/controller/group_controller.dart';
 import 'package:whatsapp_clone/features/group/widgets/select_contacts_group.dart';
 
-class CreateGroupScreen extends StatefulWidget {
+class CreateGroupScreen extends ConsumerStatefulWidget {
   static const String routeName = "/create-group-screen";
   const CreateGroupScreen({super.key});
 
   @override
-  State<CreateGroupScreen> createState() => _CreateGroupScreenState();
+  ConsumerState<CreateGroupScreen> createState() => _CreateGroupScreenState();
 }
 
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
+class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   File? image;
   final TextEditingController groupNameController = TextEditingController();
 
@@ -24,9 +26,16 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     setState(() {});
   }
 
-  void createGroup(){
-    if(groupNameController.text.trim().isNotEmpty && image !=null){
-
+  void createGroup() {
+    if (groupNameController.text.trim().isNotEmpty && image != null) {
+      ref.read(groupControllerProvider).createGroup(
+            context: context,
+            groupName: groupNameController.text.trim(),
+            groupProfile: image!,
+            selectedContact: ref.read(selectedGroupContacts),
+          );
+      ref.read(selectedGroupContacts.notifier).update((state) => []);
+      Navigator.pop(context);
     }
   }
 
@@ -40,7 +49,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: createGroup,
         backgroundColor: tabColor,
         child: Icon(Icons.done, color: Colors.white),
       ),
