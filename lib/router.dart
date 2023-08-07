@@ -11,6 +11,9 @@ import 'package:whatsapp_clone/features/auth/screens/user_information_screen.dar
 import 'package:whatsapp_clone/features/select%20contacts/screens/select_contact_screen.dart';
 import 'package:whatsapp_clone/features/chat/screens/mobile_chat_screen.dart';
 import 'package:whatsapp_clone/features/status/screens/confirm_status_screen.dart';
+import 'package:whatsapp_clone/models/status_model.dart';
+
+import 'features/status/screens/status_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -42,6 +45,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       final file = settings.arguments as File;
       return MaterialPageRoute(
         builder: (context) => ConfirmStatusScreen(file: file),
+      );
+    case StatusScreen.routeName:
+      final status = settings.arguments as Status;
+      return MaterialPageRoute(
+        builder: (context) => StatusScreen(status: status),
       );
     default:
       return MaterialPageRoute(
