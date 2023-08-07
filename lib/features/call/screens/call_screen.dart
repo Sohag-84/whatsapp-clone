@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/config/agora_config.dart';
+import 'package:whatsapp_clone/features/call/controller/call_controller.dart';
 import 'package:whatsapp_clone/models/call.dart';
 import 'package:agora_uikit/agora_uikit.dart';
 
@@ -57,9 +58,15 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   AgoraVideoViewer(client: client!),
                   AgoraVideoButtons(
                     client: client!,
-                    disableVideoButtonChild: IconButton(
+                    disconnectButtonChild: IconButton(
                       onPressed: () async {
                         await client!.engine.leaveChannel();
+                        ref.read(callControllerProvider).endCall(
+                              context: context,
+                              callerId: widget.call.callerId,
+                              receiverId: widget.call.receiverId,
+                            );
+                        Navigator.pop(context);
                       },
                       icon: Icon(Icons.call_end),
                     ),

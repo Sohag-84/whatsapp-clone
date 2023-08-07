@@ -29,6 +29,7 @@ class CallController {
 
   Stream<DocumentSnapshot> get callStream => callRepository.callStream;
 
+  /// to create call
   void makeCall({
     required BuildContext context,
     required String receiverName,
@@ -66,5 +67,18 @@ class CallController {
         receiverCallData: receiverCallData,
       );
     });
+  }
+
+  ///for end call
+  void endCall({
+    required BuildContext context,
+    required String callerId,
+    required String receiverId,
+  }) {
+    callRepository.endCall(
+      context: context,
+      callerId: callerId,
+      receiverId: receiverId,
+    );
   }
 }
