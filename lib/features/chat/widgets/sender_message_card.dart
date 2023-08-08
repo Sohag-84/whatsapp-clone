@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
-import 'package:whatsapp_clone/colors.dart';
+import 'package:whatsapp_clone/common/utils/colors.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 
 import 'display_text_image_gif.dart';
