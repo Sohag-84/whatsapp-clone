@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -65,6 +67,7 @@ class ChatController {
             isGroupChat: isGroupChat,
           ),
         );
+    ref.read(messageReplyProvider.state).update((state) => null);
   }
 
   ///For file message like-->audio,video,gif etc

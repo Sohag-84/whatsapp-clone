@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/call/screens/call_screen.dart';
 import 'package:whatsapp_clone/models/call.dart';
+import 'package:whatsapp_clone/models/group.dart';
 
 final callRepositoryProvider = Provider(
   (ref) => CallRepository(
@@ -54,6 +55,50 @@ class CallRepository {
             channelId: senderCallData.callerId,
             call: senderCallData,
             isGroupChat: false,
+          ),
+        ),
+      );
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
+
+  ///for make group call
+  void makeGroupCall({
+    required BuildContext context,
+    required Call senderCallData,
+    required Call receiverCallData,
+  }) async {
+    try {
+      ///document for sender
+      await firestore
+          .collection("call")
+          .doc(senderCallData.callerId)
+          .set(senderCallData.toMap());
+
+      ///get group data first
+      var groupSnapshot = await firestore
+          .collection('groups')
+          .doc(senderCallData.receiverId)
+          .get();
+
+      GroupModel groupModel = GroupModel.fromMap(groupSnapshot.data()!);
+
+      for (var id in groupModel.membersUid) {
+        ///document for receiver
+        await firestore
+            .collection("call")
+            .doc(id)
+            .set(receiverCallData.toMap());
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CallScreen(
+            channelId: senderCallData.callerId,
+            call: senderCallData,
+            isGroupChat: true,
           ),
         ),
       );

@@ -61,11 +61,19 @@ class CallController {
         hasDialled: false,
       );
 
-      callRepository.makeCall(
-        context: context,
-        senderCallData: senderCallData,
-        receiverCallData: receiverCallData,
-      );
+      if (isGroupChat) {
+        callRepository.makeGroupCall(
+          context: context,
+          senderCallData: senderCallData,
+          receiverCallData: receiverCallData,
+        );
+      } else {
+        callRepository.makeCall(
+          context: context,
+          senderCallData: senderCallData,
+          receiverCallData: receiverCallData,
+        );
+      }
     });
   }
 
