@@ -1,6 +1,6 @@
-# whatsapp_clone
+# WhatsApp Clone
 
-A new Flutter project.
+Flutter WhatsApp clone using Firebase,Riverpod and Agora
 
 ## Getting Started
 
