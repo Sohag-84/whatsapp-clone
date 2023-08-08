@@ -58,6 +58,8 @@ class SelectContactRepository {
           arguments: {
             'name':userData.name,
             'uid':userData.uid,
+            'profilePic': userData.profilePic,
+            'isGroupChat':false,
           },);
         }
         print("==> ==> $selectedPhoneNumber <== <==");

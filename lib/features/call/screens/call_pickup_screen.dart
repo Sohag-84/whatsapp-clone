@@ -90,7 +90,7 @@ class CallPickupScreen extends ConsumerWidget {
             );
           }
         }
-        return Scaffold();
+        return scaffold;
       },
     );
   }
