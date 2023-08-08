@@ -123,4 +123,31 @@ class CallRepository {
       showSnackBar(context: context, content: e.toString());
     }
   }
+
+  ///for end call
+  void endGroupCall({
+    required BuildContext context,
+    required String callerId,
+    required String receiverId,
+  }) async {
+    try {
+      ///delete document after the end call from the sender side
+      await firestore.collection("call").doc(callerId).delete();
+
+      ///get group data first
+      var groupSnapshot =
+          await firestore.collection('groups').doc(receiverId).get();
+
+      GroupModel groupModel = GroupModel.fromMap(groupSnapshot.data()!);
+      for (var id in groupModel.membersUid) {
+        ///delete document after the end call from the receiver side
+        await firestore.collection("call").doc(id).delete();
+      }
+
+      ///delete document after the end call from the receiver side
+      await firestore.collection("call").doc(receiverId).delete();
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
 }
