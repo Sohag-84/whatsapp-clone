@@ -1,4 +1,4 @@
-# WhatsApp Clone
+#Full Stack WhatsApp Clone
 
 Flutter WhatsApp clone using Firebase,Riverpod and Agora
 
